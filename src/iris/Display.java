@@ -140,7 +140,7 @@ public class Display extends JPanel
 	static void setup() throws Exception
 	{
 		System.out.print("Enter name of midi file: ");
-		midi_file = "let.mid";//new Scanner(System.in).nextLine();
+		midi_file = new Scanner(System.in).nextLine();
 		
 		sequence = MidiSystem.getSequence(new File(midi_file));
 		MS_PER_TICK = sequence.getMicrosecondLength() / (1000.0 * sequence.getTickLength());
@@ -155,7 +155,7 @@ public class Display extends JPanel
 			for(int notei = 0; notei < track.size(); notei++)
 			{
 				MidiEvent event = track.get(notei);
-				int tick = (int) event.getTick(); //System.out.println(tick);
+				int tick = (int) event.getTick();
 				MidiMessage message = event.getMessage();
 				if(message instanceof ShortMessage)
 				{
@@ -215,11 +215,9 @@ public class Display extends JPanel
 	{
 		G.setColor(Color.gray);
 		double measure = 60.0 * 1000.0 / sequencer.getTempoInBPM() / MS_PER_PIXEL; // pixels per measure
-		//System.out.println(measure);
 		for(double pixel = Math.ceil(CUR_PIXEL / measure) * measure - CUR_PIXEL; pixel <= FRONT_LINE; pixel += measure)
 		{
 			int y = (int) Math.round(FRONT_LINE - pixel);
-			//System.out.println(y);;
 			G.drawLine(0, y, WINDOW_WIDTH, y);
 		}
 	}
@@ -453,7 +451,7 @@ public class Display extends JPanel
 	public static void main(String[] args) throws Exception
 	{
 		setup();
-//System.out.println(sequencer.getTempoInBPM() + " " + sequencer.getTempoInMPQ());
+
 		load();
 		
 		JFrame display = new JFrame();
