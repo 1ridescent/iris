@@ -95,7 +95,6 @@ public class Display extends JPanel
 	static int CUR_PIXEL;
 	static double MS_PER_TICK;
 	static float SPEEDUP = 1.0f;
-	static boolean SHOW_MEASURES = false;
 	
 	// Control keys
 	static final char KEY_FASTER = 'f';
@@ -104,14 +103,12 @@ public class Display extends JPanel
 	static final char KEY_PLAY_PAUSE = 'p';
 	static final char KEY_QUIT = 'q';
 	static final char KEY_REFRESH = 'r';
-	static final char KEY_TOGGLE_MEASURE = 'm';
 	// note: all savestates are 0 initially, so you can reserve '0' for reset
 	static long[] savestates = new long[10];
 	static final char[] SAVE_STATE = {')', '!', '@', '#', '$', '%', '^', '&', '*', '('};
 	static final char[] LOAD_STATE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 	static boolean[] track_muted = new boolean[10];
 	static final int[] TOGGLE_TRACK_MUTE = {112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
-	
 	
 	// ***** Global note data *****
 	
@@ -155,7 +152,7 @@ public class Display extends JPanel
 			for(int notei = 0; notei < track.size(); notei++)
 			{
 				MidiEvent event = track.get(notei);
-				int tick = (int) event.getTick(); //System.out.println(tick);
+				int tick = (int) event.getTick();
 				MidiMessage message = event.getMessage();
 				if(message instanceof ShortMessage)
 				{
@@ -210,22 +207,11 @@ public class Display extends JPanel
 	
 	
 	// ***** Graphic functions *****
-
-	void draw_measures(Graphics G)
-	{
-		G.setColor(Color.gray);
-		double measure = 60.0 * 1000.0 / sequencer.getTempoInBPM() / MS_PER_PIXEL; // pixels per measure
-		//System.out.println(measure);
-		for(double pixel = Math.ceil(CUR_PIXEL / measure) * measure - CUR_PIXEL; pixel <= FRONT_LINE; pixel += measure)
-		{
-			int y = (int) Math.round(FRONT_LINE - pixel);
-			//System.out.println(y);;
-			G.drawLine(0, y, WINDOW_WIDTH, y);
-		}
-	}
 	
 	void draw_notes(Graphics G)
 	{
+		G.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		
 		for(Rectangle rect : rects)
 		{
 			if(track_muted[rect.track]) continue; // muted
@@ -297,11 +283,6 @@ public class Display extends JPanel
 	
 	public void paintComponent(Graphics G)
 	{
-		G.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-		if(SHOW_MEASURES)
-			draw_measures(G);
-		
 		draw_notes(G);
 		
 		draw_piano(G);
@@ -386,9 +367,6 @@ public class Display extends JPanel
 				case KEY_REFRESH:
 					sequencer.setTickPosition(sequencer.getTickPosition());
 					break;
-				case KEY_TOGGLE_MEASURE:
-					SHOW_MEASURES = !SHOW_MEASURES;
-					break;
 				}
 				
 				for(int i = 0; i < savestates.length; i++)
@@ -453,7 +431,7 @@ public class Display extends JPanel
 	public static void main(String[] args) throws Exception
 	{
 		setup();
-//System.out.println(sequencer.getTempoInBPM() + " " + sequencer.getTempoInMPQ());
+		
 		load();
 		
 		JFrame display = new JFrame();
