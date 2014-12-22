@@ -140,7 +140,7 @@ public class Display extends JPanel
 	static void setup() throws Exception
 	{
 		System.out.print("Enter name of midi file: ");
-		midi_file = new Scanner(System.in).nextLine();
+		midi_file = "let.mid";//new Scanner(System.in).nextLine();
 		
 		sequence = MidiSystem.getSequence(new File(midi_file));
 		MS_PER_TICK = sequence.getMicrosecondLength() / (1000.0 * sequence.getTickLength());
@@ -339,7 +339,11 @@ public class Display extends JPanel
 			for(int i = 0; i < savestates.length; i++)
 				savestates[i] = fin.nextLong();
 			for(int i = 0; i < track_muted.length; i++)
+			{
 				track_muted[i] = fin.nextBoolean();
+				if(track_muted[i]) 
+					sequencer.setTrackMute(i, track_muted[i]);
+			}
 			fin.close();
 		}
 		catch (FileNotFoundException e)
